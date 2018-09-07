@@ -1,82 +1,116 @@
 const clientId = 'bf09f0f8598d40a49156efdc8c7eb393';
 const redirectUri = 'Jammering.surge.sh';
 let accessToken;
-let expire;
+//let expire; not needed
 
 const Spotify = {
-  savePlaylist(playlistName,trackArray){
-    let accessToken = getAccessToken();
-    let headers = {
-      Authorization: `Bearer ${accessToken}`//this is probably not correct step 91
-    };
-
-    let userID = '';
-    if(!(playlistName&&trackArray)){
-      return;
-    }
-    //step 92
-    const xhr = new XMLHttpRequest;
-    const url = 'https://api.spotify.com/v1/me';
-
-    xhr.responseType = 'json';
-    xhr.onreadystatechange = () => {
-      if(xhr.readyState === XMLHttpRequest.DONE){
-        userID = xhr.response;
-      }
-    };
-    //step 93
-    xhr.open('username',{headers: headers}); //I don't yet have the users' name?
-    xhr.send();
-
-    const xhr = new XMLHttpRequest;
-    const url = '/v1/users/{user_id}/playlists/{playlist_id}/tracks';
-    const data = JSON.stringify(userID);
-    xhr.responseType = 'json';
-    xhr.onreadystatechange = () => {
-      if(xhr.readyState === XMLHttpRequest.DONE){
-        playlistID = xhr.response.id;
-      }
-    };
-    xhr.open('POST',url,{headers:,method:,body:});
-    xhr.send(data);
-
-    const xhr = new XMLHttpRequest;
-    const url = '/v1/users/{user_id}/playlists';
-    const data = JSON.stringify(userID);
-    xhr.responseType = 'json';
-    xhr.onreadystatechange = () => {
-      if(xhr.readyState === XMLHttpRequest.DONE){
-        playlistID = xhr.response.id;
-      }
-    };
-    xhr.open('TEST',url,{headers:,method:,body:});
-    xhr.send(data);
-  }
-  search(term){
-    return fetch('https://api.spotify.com/v1/search?type=track&q='+term,{
-      headers: {Authorization: `Bearer ${accessToken}`}
-    }).map(track=() =>{
-      id: track.id,
-      name: track.name,
-      artist: track.artist[0].name,
-      album: track.album.name,
-      uri: track.uri
-    });
-  }
   getAccessToken() {
-    let expire;
     if (accessToken) {
       return accessToken;
-    } elseif(!accessToken) {
-      accessToken = windows.location.href.match('/access_token=([^&]*)/');
-      expire = windows.location.href.match('/expires_in=([^&]*)/');
+    }
+
+    const accessTokenArray = window.location.href.match('/access_token=([^&]*)/');
+    const expireArray = window.location.href.match('/expires_in=([^&]*)/');
+
+    if (accessTokenArray&&expireArray) {
+      accessToken = accessTokenArray[1];//this is a non-symmetric array...and in this case we need a very long string that gets searched in by the match
+      const expire = Number(expireArray[1]);
       window.setTimeout(() => accessToken = '', expire * 1000);
       window.history.pushState('Access Token', null, '/');
       return accessToken;
     } else {
-      window.location = "https://accounts.spotify.com/authorize?client_id="+
-      +CLIENT_ID+"&response_type=token&scope=playlist-modify-public&redirect_uri="+REDIRECT_URI;
+      const accessUrl = "https://accounts.spotify.com/authorize?client_id="+
+      +clientId+"&response_type=token&scope=playlist-modify-public&redirect_uri="+redirectUri;
+      window.location = accessUrl //ask about what this is.
     }
-  }
+  },
 
+  savePlaylist(playlistName,trackArray){
+    if(!(playlistName&&trackArray)){
+      return;
+    }
+
+    const accessToken = Spotify.getAccessToken();
+    const headers = { Authorization: `Bearer ${accessToken}`};
+    let userId;
+    //step 92
+    return fetch('https://api.spotify.com/v1/me', {headers: headers}
+    ).then(response => response.json()
+    ).then(jsonResponse => {
+      userId = jsonResponse.id;
+      return fetch('https://api.spotify.com/v1/users/'+userId+'/playlist', {
+        headers: headers,
+        method: 'POST',
+        body: JSON.stringify({name: playlistName})
+      }).then(response => response.json()
+      ).then(jsonResponse => {
+        const playlistId = jsonResponse.id;
+        return fetch('https://api.spotify.com/v1/users/'+userId+'/playlist'+playlistId+'/tracks', {
+          headers: headers,
+          method: 'POST',
+          body: JSON.stringify({uris: trackArray})
+        });
+      });
+    });
+  },
+  //   const xhr = new XMLHttpRequest;
+  //   const url = 'https://api.spotify.com/v1/me';
+  //
+  //   xhr.responseType = 'json';
+  //   xhr.onreadystatechange = () => {
+  //     if(xhr.readyState === XMLHttpRequest.DONE){
+  //       userID = xhr.response;
+  //     }
+  //   };
+  //   //step 93
+  //   xhr.open('username',{headers: headers}); //I don't yet have the users' name?
+  //   xhr.send();
+  //
+  //   const xhr = new XMLHttpRequest;
+  //   const url = '/v1/users/{user_id}/playlists/{playlist_id}/tracks';
+  //   const data = JSON.stringify(userID);
+  //   xhr.responseType = 'json';
+  //   xhr.onreadystatechange = () => {
+  //     if(xhr.readyState === XMLHttpRequest.DONE){
+  //       playlistID = xhr.response.id;
+  //     }
+  //   };
+  //   xhr.open('POST',url,{headers:,method:,body:});
+  //   xhr.send(data);
+  //
+  //   const xhr = new XMLHttpRequest;
+  //   const url = '/v1/users/{user_id}/playlists';
+  //   const data = JSON.stringify(userID);
+  //   xhr.responseType = 'json';
+  //   xhr.onreadystatechange = () => {
+  //     if(xhr.readyState === XMLHttpRequest.DONE){
+  //       playlistID = xhr.response.id;
+  //     }
+  //   };
+  //   xhr.open('TEST',url,{headers:,method:,body:});
+  //   xhr.send(data);
+  // },
+
+  search(term){
+    const accessToken = Spotify.getAccessToken(); //ask if this is the actual place where we get accessToken
+    return fetch('https://api.spotify.com/v1/search?type=track&q='+term,{
+      headers: {Authorization: `Bearer ${accessToken}`}
+    }).then(response =>{ //ask about what this tree-logic is...
+      return response.json();
+    }).then(jsonResponse => { //what is jsonResponse
+      if (!jsonResponse.tracks) {
+        return [];
+      }
+      return jsonResponse.tracks.items.map(track => ({
+        id: track.id,
+        name: track.name,
+        artist: track.artist[0].name,
+        album: track.album.name,
+        uri: track.uri
+      }));
+    });
+  },
+
+
+}
 export default Spotify;

@@ -2,9 +2,9 @@ import React from 'react';
 import './SearchBar.css';
 
 export class SearchBar extends React.Component() {
-  constructor(){
+  constructor(props){
     super(props);
-    this.search.bind(this);
+    this.search = this.search.bind(this);
     this.handleTermChange.bind(this);
   }
   handleTermChange(event){
@@ -22,3 +22,5 @@ export class SearchBar extends React.Component() {
     )
   }
 }
+
+export default SearchBar;
