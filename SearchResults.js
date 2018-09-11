@@ -2,14 +2,17 @@ import React from 'react';
 import './SearchResults.css';
 import TrackList from '../TrackList/TrackList';
 
-export class SearchResults extends React.Component() {
+export class SearchResults extends React.Component {
   render(){
+    console.log("searchTest"+this.props.tracks);
     return (
       <div className="SearchResults">
         <h2>Results</h2>
-        <TrackList tracks={this.props.searchResults} onAdd={this.props.onAdd} isRemoval={false} />
-        //step 33
+        <TrackList tracks={this.props.result} onAdd={this.props.onAdd} isRemoval={false} />
+
       </div>
     )
   }
 }
+
+export default SearchResults;

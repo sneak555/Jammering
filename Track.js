@@ -1,12 +1,20 @@
 import React from 'react';
 import './Track.css';
 
-class Track extends React.Component() {
-  constructor(props){
+class Track extends React.Component
+{
+  constructor(props)
+  {
     super(props);
     this.addTrack = this.addTrack.bind(this);
-    this.removeTrack = this.removeTrack.bind(this);
+    this.removeTrack  = this.removeTrack.bind(this);
   }
+// class Track extends React.Component() {
+//   constructor(props){
+//     super(props);
+//     this.addTrack = this.addTrack.bind(this);
+//     this.removeTrack = this.removeTrack.bind(this);
+//   }
   renderAction(){
     if(this.props.isRemoval) {
       //go over this stuff
@@ -42,6 +50,8 @@ class Track extends React.Component() {
     }
   }
   render(){
+    console.log("trackTest"+this.props.tracks);
+
     return (
       <div class="Track">
         <div class="Track-information">

@@ -1,5 +1,5 @@
 const clientId = 'bf09f0f8598d40a49156efdc8c7eb393';
-const redirectUri = 'Jammering.surge.sh';
+const redirectUri = 'http://jammering.surge.sh';
 let accessToken;
 //let expire; not needed
 
@@ -19,9 +19,8 @@ const Spotify = {
       window.history.pushState('Access Token', null, '/');
       return accessToken;
     } else {
-      const accessUrl = "https://accounts.spotify.com/authorize?client_id="+
-      +clientId+"&response_type=token&scope=playlist-modify-public&redirect_uri="+redirectUri;
-      window.location = accessUrl //ask about what this is.
+      const accessUrl = `https://accounts.spotify.com/authorize?client_id=${clientId}&response_type=token&redirect_uri=${redirectUri}&scope=playlist-modify-public`;
+      window.location.href = accessUrl;
     }
   },
 
@@ -30,10 +29,10 @@ const Spotify = {
       return;
     }
 
-    const accessToken = Spotify.getAccessToken();
+    const accessToken = `https://accounts.spotify.com/authorize?client_id=${clientId}&response_type=token&redirect_uri=${redirectUri}&scope=playlist-modify-public`;
     const headers = { Authorization: `Bearer ${accessToken}`};
     let userId;
-    //step 92
+
     return fetch('https://api.spotify.com/v1/me', {headers: headers}
     ).then(response => response.json()
     ).then(jsonResponse => {
@@ -53,6 +52,7 @@ const Spotify = {
       });
     });
   },
+  /*
   //   const xhr = new XMLHttpRequest;
   //   const url = 'https://api.spotify.com/v1/me';
   //
@@ -89,15 +89,15 @@ const Spotify = {
   //   };
   //   xhr.open('TEST',url,{headers:,method:,body:});
   //   xhr.send(data);
-  // },
+  //*/
 
   search(term){
     const accessToken = Spotify.getAccessToken(); //ask if this is the actual place where we get accessToken
     return fetch('https://api.spotify.com/v1/search?type=track&q='+term,{
       headers: {Authorization: `Bearer ${accessToken}`}
-    }).then(response =>{ //ask about what this tree-logic is...
+    }).then(response =>{ //this gets the response and converts it to json (something our side can understand better)
       return response.json();
-    }).then(jsonResponse => { //what is jsonResponse
+    }).then(jsonResponse => {
       if (!jsonResponse.tracks) {
         return [];
       }
@@ -110,7 +110,5 @@ const Spotify = {
       }));
     });
   },
-
-
 }
 export default Spotify;
