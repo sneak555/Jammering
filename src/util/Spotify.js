@@ -1,5 +1,5 @@
 const clientId = 'bf09f0f8598d40a49156efdc8c7eb393';
-const redirectUri = 'http://jammering.surge.sh';
+const redirectUri = 'https://jammering.surge.sh/';
 let accessToken;
 //let expire; not needed
 
@@ -9,8 +9,8 @@ const Spotify = {
       return accessToken;
     }
 
-    const accessTokenArray = window.location.href.match('/access_token=([^&]*)/');
-    const expireArray = window.location.href.match('/expires_in=([^&]*)/');
+    const accessTokenArray = window.location.href.match(/access_token=([^&]*)/);
+    const expireArray = window.location.href.match(/expires_in=([^&]*)/);
 
     if (accessTokenArray&&expireArray) {
       accessToken = accessTokenArray[1];//this is a non-symmetric array...and in this case we need a very long string that gets searched in by the match
@@ -93,7 +93,7 @@ const Spotify = {
 
   search(term){
     const accessToken = Spotify.getAccessToken(); //ask if this is the actual place where we get accessToken
-    return fetch('https://api.spotify.com/v1/search?type=track&q='+term,{
+    return fetch("https://api.spotify.com/v1/search?type=track&q="+term,{
       headers: {Authorization: `Bearer ${accessToken}`}
     }).then(response =>{ //this gets the response and converts it to json (something our side can understand better)
       return response.json();

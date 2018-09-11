@@ -18,29 +18,9 @@ class App extends React.Component {
     this.search = this.search.bind(this);
     this.state = {
       playlistName: "this is the playlistName string",
-      playlistTracks: [{ //this is from step 37
-        name: 'song1p', artist: 'Bob1p', album: 'cheese1p', id: '1231p'
-      },{
-        name: 'song2p', artist: 'Bob2p', album: 'cheese2p', id: '1232p'
-      },{
-        name: 'song3p', artist: 'Bob3p', album: 'cheese3p', id: '1233p'
-      },{
-        name: 'song4p', artist: 'Bob4p', album: 'cheese4p', id: '1234p'
-      },{
-        name: 'song5p', artist: 'Bob5p', album: 'cheese5p', id: '1235p'
-      }],
+      playlistTracks: [],
 
-      searchResults: [{
-        name: 'song1', artist: 'Bob1', album: 'cheese1', id: '1231'
-      },{
-        name: 'song2', artist: 'Bob2', album: 'cheese2', id: '1232'
-      },{
-        name: 'song3', artist: 'Bob3', album: 'cheese3', id: '1233'
-      },{
-        name: 'song4', artist: 'Bob4', album: 'cheese4', id: '1234'
-      },{
-        name: 'song5', artist: 'Bob5', album: 'cheese5', id: '1235'
-      }]
+      searchResults: [],
     };
   }
 
