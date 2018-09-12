@@ -52,47 +52,9 @@ const Spotify = {
       });
     });
   },
-  /*
-  //   const xhr = new XMLHttpRequest;
-  //   const url = 'https://api.spotify.com/v1/me';
-  //
-  //   xhr.responseType = 'json';
-  //   xhr.onreadystatechange = () => {
-  //     if(xhr.readyState === XMLHttpRequest.DONE){
-  //       userID = xhr.response;
-  //     }
-  //   };
-  //   //step 93
-  //   xhr.open('username',{headers: headers}); //I don't yet have the users' name?
-  //   xhr.send();
-  //
-  //   const xhr = new XMLHttpRequest;
-  //   const url = '/v1/users/{user_id}/playlists/{playlist_id}/tracks';
-  //   const data = JSON.stringify(userID);
-  //   xhr.responseType = 'json';
-  //   xhr.onreadystatechange = () => {
-  //     if(xhr.readyState === XMLHttpRequest.DONE){
-  //       playlistID = xhr.response.id;
-  //     }
-  //   };
-  //   xhr.open('POST',url,{headers:,method:,body:});
-  //   xhr.send(data);
-  //
-  //   const xhr = new XMLHttpRequest;
-  //   const url = '/v1/users/{user_id}/playlists';
-  //   const data = JSON.stringify(userID);
-  //   xhr.responseType = 'json';
-  //   xhr.onreadystatechange = () => {
-  //     if(xhr.readyState === XMLHttpRequest.DONE){
-  //       playlistID = xhr.response.id;
-  //     }
-  //   };
-  //   xhr.open('TEST',url,{headers:,method:,body:});
-  //   xhr.send(data);
-  //*/
 
   search(term){
-    const accessToken = Spotify.getAccessToken(); //ask if this is the actual place where we get accessToken
+    Spotify.getAccessToken();
     return fetch("https://api.spotify.com/v1/search?type=track&q="+term,{
       headers: {Authorization: `Bearer ${accessToken}`}
     }).then(response =>{ //this gets the response and converts it to json (something our side can understand better)
@@ -104,7 +66,7 @@ const Spotify = {
       return jsonResponse.tracks.items.map(track => ({
         id: track.id,
         name: track.name,
-        artist: track.artist[0].name,
+        artist: track.artists[0].name,
         album: track.album.name,
         uri: track.uri
       }));
@@ -112,3 +74,41 @@ const Spotify = {
   },
 }
 export default Spotify;
+/*
+//   const xhr = new XMLHttpRequest;
+//   const url = 'https://api.spotify.com/v1/me';
+//
+//   xhr.responseType = 'json';
+//   xhr.onreadystatechange = () => {
+//     if(xhr.readyState === XMLHttpRequest.DONE){
+//       userID = xhr.response;
+//     }
+//   };
+//   //step 93
+//   xhr.open('username',{headers: headers}); //I don't yet have the users' name?
+//   xhr.send();
+//
+//   const xhr = new XMLHttpRequest;
+//   const url = '/v1/users/{user_id}/playlists/{playlist_id}/tracks';
+//   const data = JSON.stringify(userID);
+//   xhr.responseType = 'json';
+//   xhr.onreadystatechange = () => {
+//     if(xhr.readyState === XMLHttpRequest.DONE){
+//       playlistID = xhr.response.id;
+//     }
+//   };
+//   xhr.open('POST',url,{headers:,method:,body:});
+//   xhr.send(data);
+//
+//   const xhr = new XMLHttpRequest;
+//   const url = '/v1/users/{user_id}/playlists';
+//   const data = JSON.stringify(userID);
+//   xhr.responseType = 'json';
+//   xhr.onreadystatechange = () => {
+//     if(xhr.readyState === XMLHttpRequest.DONE){
+//       playlistID = xhr.response.id;
+//     }
+//   };
+//   xhr.open('TEST',url,{headers:,method:,body:});
+//   xhr.send(data);
+//*/
